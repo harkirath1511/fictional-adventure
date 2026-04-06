@@ -30,12 +30,12 @@ func insertOneMovie(movie models.Netflix) {
 
 // update 1
 func updateOneMovie(movieId string) {
-	id, err := primitive.ObjectIDFromHex(movieId)
+	id, err := bson.ObjectIDFromHex(movieId)
 	if err != nil {
 		log.Fatal("The given id id not valid or some err : ", err)
 	}
 	filter := bson.M{"_id": id}
-	update := bson.M{"$set": bson.M{"watched": true}}
+	update := bson.M{"$set": bson.M{"iswatched": true}}
 
 	res, _ := collection.UpdateOne(context.Background(), filter, update)
 	fmt.Println("Modified cnt = ", res.ModifiedCount)
@@ -43,7 +43,7 @@ func updateOneMovie(movieId string) {
 
 // delete 1
 func deleteOne(movieId string) {
-	id, _ := primitive.ObjectIDFromHex(movieId)
+	id, _ := bson.ObjectIDFromHex(movieId)
 
 	filter := bson.M{"_id": id}
 
@@ -85,9 +85,6 @@ func getAll() []primitive.M {
 	return movies
 }
 
-
-
-
 //actual controllers
 
 func GetAllMovies(w http.ResponseWriter, r *http.Request) {
@@ -105,8 +102,8 @@ func CreateMovie(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(movie)
 }
 
-func MarkAsWatched(w http.ResponseWriter, r *http.Request){
-	w.Header().Set("Content-Type","application/json")
+func MarkAsWatched(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
 
 	params := mux.Vars(r)
 
@@ -114,19 +111,17 @@ func MarkAsWatched(w http.ResponseWriter, r *http.Request){
 	json.NewEncoder(w).Encode(params["id"])
 }
 
-func DeleteOne(w http.ResponseWriter, r *http.Request){
-	w.Header().Set("Content-Type","application/json")
-	
+func DeleteOne(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+
 	params := mux.Vars(r)
 	deleteOne(params["id"])
 	json.NewEncoder(w).Encode(params["id"])
 }
 
-func DeleteAll(w http.ResponseWriter, r *http.Request){
-	w.Header().Set("Content-Type","application/json")
-	
+func DeleteAll(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+
 	cnt := deleteAll()
 	json.NewEncoder(w).Encode(cnt)
 }
-
-func 
